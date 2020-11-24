@@ -27,7 +27,10 @@ class CalcButton(ttk.Frame):
         # este self penja del CalcButton, creo un botó i el peguem a mi mateix amb el parent
 
 
+botones = (('C', 1), ('+/-',1), ('%',1), ('÷', 1), ('7', 1), ('8', 1), ('9', 1), ('x', 1), ('4', 1), ('5', 1), ('6', 1), ('-', 1), ('1', 1), ('2', 1), ('3', 1), ('+', 1), ('0',2), (',', 1), ('=', 1))
+coordenadas = []
 
+class Keyboard(ttk.Frame):
     def __init__(self, parent):
         ttk.Frame.__init__(self, parent, width=WIDTH*4, height=HEIGHT*5)
         self.pack_propagate(0)
@@ -139,17 +142,17 @@ dbotones = [
         'c': 3,
     },
 ]
-class Keyboard(ttk.Frame):
+class Keyboard_amb_DIC(ttk.Frame):
     def __init__(self, parent):
         ttk.Frame.__init__(self, parent, width=WIDTH*4, height=HEIGHT*5)
         self.pack_propagate(0)
-        s = ttk.Style()
+        s = ttk.Style() 
         s.theme_use("alt")
 
         for boton in dbotones:
-            w = boton.get("w", 1)
-            h = boton.get("h", 1)
+            w = boton.get ("w", 1)
+            h = boton.get ("h", 1)
 
-            boton = CalcButton(self, boton["text"], width=w, height=h)
-            boton.grid(row=boton["r"], column=boton["c"], columnspan=w, rowspan=h)
+            btn = CalcButton(self, boton ["text"], widh=w, height=h)
+            btn.grid(row=boton["r"], column=boton["c"], columnspan=w, rowspan=h)
 
