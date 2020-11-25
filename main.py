@@ -8,14 +8,8 @@ class MainApp(Tk):
         Tk.__init__(self)
         self.title("Calculadora")
 
-        self.display = calculator.Display(self) #aci estem cridant al display del document de la calculadora
-        self.display.pack(side=TOP, fill=BOTH, expand=True) 
+        self.calculator = calculator.Calculator(self) #aci estem cridant al display del document de la calculadora
 
-        self.teclado = calculator.Keyboard(self)
-        self.teclado.pack(side=TOP) 
-
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     app = MainApp()
     app.mainloop()
