@@ -102,15 +102,17 @@ dbotones = [
 def retornaCaracter(tecla):
     print('han pulsado', tecla)
 
+
 class Display(ttk.Frame):
 
-    def __init__(self, parent): #parent penja de main
+    def __init__(self, parent):  #parent penja de main
         ttk.Frame.__init__(self, parent, width=WIDTH*4, height=HEIGHT)
-        self.pack_propagate(0) #es lo mateix 0 o ficar false
+        self.pack_propagate(0)#es lo mateix 0 o ficar false
         s = ttk.Style()
         s.theme_use('alt')
 
-        self.label = ttk.Label(self, text="0", anchor=E, background='black', foreground='white', font='Helvetica 36') #el pare d'esta label es def __init__(self):)
+        self.label = ttk.Label(self, text="0", anchor=E, background='black', foreground='white', font='Helvetica 36')#el pare d'esta label es def __init__(self):)
+        # el "O" del text canvia les dades del text 
         self.label.pack(side=TOP, fill=BOTH, expand=True)
 
     def refresh(self, texto):
@@ -120,11 +122,15 @@ class CalcButton(ttk.Frame):
     def __init__(self, parent, text, command=None, width=1, height=1):
         ttk.Frame.__init__(self, parent, width=WIDTH*width, height=HEIGHT*height)
         self.pack_propagate(0)
-        s = ttk.Style()
-        s.theme_use('alt')
+        self.value = text
+        self.command = command
 
-        ttk.Button(self, text=text, command=lambda: command(text) ).pack(side=TOP, fill=BOTH, expand=True)
-        # este self penja del CalcButton, creo un botó i el peguem a mi mateix amb el parent
+        ttk.Button(self, text=text, command=self.send).pack(side=TOP, fill=BOTH, expand=True)
+        # este self penja del CalcButton, creo un botó i el peguem a mi mateix amb el parent. El creem i empaquetem
+
+    def send(self): #llamar al commmand con el valor de la tecla
+        self.command(self.value)
+    
 
 
 class Keyboard(ttk.Frame):
@@ -143,25 +149,72 @@ class Keyboard(ttk.Frame):
 
 
 class Calculator(ttk.Frame):
+    valor1 = None
+    valor2 = None
+    r = None
+    operador = ""
+    cadena = ""
+
     def __init__(self, parent):
         ttk.Frame.__init__(self, parent, width=WIDTH*4, height=HEIGHT*6)
         self.pack_propagate(0)
         s = ttk.Style()
         s.theme_use('alt')
 
-        self.display = calculator.Display(self)
+        self.display = Display(self)
         self.display.pack(side=TOP, fill=BOTH, expand=True)
 
-        self.teclado = calculator.Keyboard(self, self.gestiona_calculos)
+        self.teclado = Keyboard(self, self.gestiona_calculos)
         self.teclado.pack(side=TOP)
 
     def gestiona_calculos(self, tecla):
-        '''
-        Establecer toda la lógica de calculos posible en función de lo tecleado
-        variables
-            op1
-            op2
-            operacion
-            resultado
-        '''
-        pass
+        print (tecla)
+
+        if tecla.isdigit() != 0:
+            print("cadena", self.cadena)
+            if self.cadena != "" or tecla !="0":
+                self.cadena += tecla
+                self.display.refresh(self.cadena)
+        elif tecla in "+-x÷":
+            if self.valor1 == None:
+                self.valor1 = int(self.cadena)
+                self.cadena = ""
+                self.operador = tecla
+            else:
+                if not self.cadena:
+                    return
+                self.valor2 = int(self.cadena)
+                self.r = self.calculate()
+                self.display.refresh(self.r)
+                self.valor1= self.r
+            self.cadena = ""
+
+        elif tecla == "=":
+            self.valor2 = int(self.cadena)
+            self.r = self.calculate()
+            self.display.refresh(self.r)
+            self.valor1 = self.r
+            self.cadena = ""
+        elif tecla == "C":
+            self.valor1 = 0
+            self.valor2 = 0
+            self.r = 0
+            self.operador = ""
+            self.cadena = ""
+            self.display.refresh("0")
+"""
+        elif tecla ==",":
+            self.valor1 = valor1.append (0 + ",")
+
+"""
+
+
+    def calculate(self):
+        if self.operador == "+":
+            return self.valor1 + self.valor2
+        elif self.operador == "-":
+            return self.valor1 - self.valor2
+        elif self.operador == "x":
+            return self.valor1 * self.valor2
+        else:
+            return self.valor1 / self.valor2
