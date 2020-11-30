@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk
+from ast import literal_eval
 
-#son les celdes de les nostra tabla que hem determinat per fer la calculador
 WIDTH = 68
 HEIGHT = 50
 
@@ -100,22 +100,21 @@ dbotones = [
 ]
 
 def retornaCaracter(tecla):
-    print('han pulsado', tecla)
-
+    prfloat('han pulsado', tecla)
 
 class Display(ttk.Frame):
 
-    def __init__(self, parent):  #parent penja de main
+    def __init__(self, parent):
         ttk.Frame.__init__(self, parent, width=WIDTH*4, height=HEIGHT)
-        self.pack_propagate(0)#es lo mateix 0 o ficar false
-        s = ttk.Style()
-        s.theme_use('alt')
+        self.pack_propagate(0)
 
-        self.label = ttk.Label(self, text="0", anchor=E, background='black', foreground='white', font='Helvetica 36')#el pare d'esta label es def __init__(self):)
-        # el "O" del text canvia les dades del text 
+        self.label = ttk.Label(self, text="0", anchor=E, background='black', foreground='white', font='Helvetica 36')
         self.label.pack(side=TOP, fill=BOTH, expand=True)
 
     def refresh(self, texto):
+        if not isinstance(texto, str):
+            texto = literal_eval(str(texto))
+
         self.label.config(text=texto)
 
 class CalcButton(ttk.Frame):
@@ -126,19 +125,17 @@ class CalcButton(ttk.Frame):
         self.command = command
 
         ttk.Button(self, text=text, command=self.send).pack(side=TOP, fill=BOTH, expand=True)
-        # este self penja del CalcButton, creo un botó i el peguem a mi mateix amb el parent. El creem i empaquetem
 
-    def send(self): #llamar al commmand con el valor de la tecla
+        #ttk.Button(self, text=text, command=lambda : command(text)).pack(side=TOP, fill=BOTH, expand=True)
+
+    def send(self):
         self.command(self.value)
-    
 
 
 class Keyboard(ttk.Frame):
     def __init__(self, parent, command):
         ttk.Frame.__init__(self, parent, width=WIDTH*4, height=HEIGHT*5)
         self.pack_propagate(0)
-        s = ttk.Style()
-        s.theme_use('alt')
 
         for boton in dbotones:
             w = boton.get('w', 1)
@@ -147,13 +144,12 @@ class Keyboard(ttk.Frame):
             btn = CalcButton(self, boton['text'],width=w, height=h, command=command)
             btn.grid(row=boton['r'], column=boton['c'], columnspan=w, rowspan=h)
 
-
 class Calculator(ttk.Frame):
     valor1 = None
     valor2 = None
     r = None
-    operador = ""
-    cadena = ""
+    operador = ''
+    cadena = ''
 
     def __init__(self, parent):
         ttk.Frame.__init__(self, parent, width=WIDTH*4, height=HEIGHT*6)
@@ -199,7 +195,7 @@ class Calculator(ttk.Frame):
                 self.valor2 = float(self.cadena)
                 self.r = self.calculate()
                 self.operador = tecla
-                self.display.refresh((self.formatNumber(self.r)))
+                self.display.refresh(self.r)
                 self.valor1 = self.r
 
             self.cadena = ''
@@ -208,7 +204,7 @@ class Calculator(ttk.Frame):
                 return
             self.valor2 = float(self.cadena)
             self.r = self.calculate()
-            self.display.refresh((self.formatNumber(self.r)))
+            self.display.refresh(self.r)
             self.operador = ''
             self.valor1 = self.r
             self.cadena = ''
